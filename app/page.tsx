@@ -1,91 +1,29 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import Sparkline from "../components/Sparkline";
+import { getRiskState } from "../lib/riskEngine";
+import EmailSignup from "../components/EmailSignup";
 
-export default function Home() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("");
+export default async function Home() {
+  const risk = await getRiskState();
 
-  const handleSubmit = async () => {
-    if (!email) {
-      setStatus("Please enter a valid email.");
-      return;
-    }
+  const regime = risk.regime;
+  const riskScore = risk.score;
+  const categories = risk.categories;
 
-    const res = await fetch("/api/waitlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+  const clampedScore = Math.max(-4, Math.min(4, riskScore));
+  const normalizedPosition = ((clampedScore + 4) / 8) * 100;
 
-    if (res.ok) {
-      setStatus("Thank you. You're on the list.");
-      setEmail("");
-    } else {
-      setStatus("Something went wrong.");
-    }
-  };
+  // ---------- Macro Color Helpers ----------
+  function getMacroTextColor(score: number) {
+    if (score >= 1) return "text-red-600";
+    if (score <= -1) return "text-blue-600";
+    return "text-gray-900";
+  }
 
-  // ---- Global Risk Mock Data ----
-  const regime = "Defensive Bias";
-  const riskScore = -2.3;
-
-  const categories = [
-    {
-      slug: "inflation",
-      label: "Inflation",
-      status: "Moderating",
-      summary: "Price momentum has eased relative to peak levels.",
-      trend: [2.1, 2.4, 3.2, 4.5, 5.8, 4.9, 3.8, 3.2],
-    },
-    {
-      slug: "rates",
-      label: "Interest Rates",
-      status: "Elevated",
-      summary: "Policy rates remain above long-term neutral levels.",
-      trend: [0.5, 0.75, 1.5, 2.5, 3.5, 4.25, 4.5, 4.5],
-    },
-    {
-      slug: "growth",
-      label: "Growth",
-      status: "Slowing",
-      summary: "Leading indicators point to moderating expansion.",
-      trend: [55, 54, 53, 52, 50, 49, 48, 47],
-    },
-    {
-      slug: "market",
-      label: "Market Conditions",
-      status: "Cautious",
-      summary: "Volatility remains above historical median levels.",
-      trend: [15, 16, 18, 22, 28, 24, 21, 19],
-    },
-    {
-      slug: "geopolitics",
-      label: "Key Events",
-      status: "Moderate",
-      summary: "Ongoing structural geopolitical developments.",
-      trend: [1, 1, 2, 2, 3, 3, 2, 2],
-    },
-  ];
-
-  const getBorderStyle = (status: string) => {
-    switch (status) {
-      case "Moderating":
-        return "border-l-4 border-l-blue-500";
-      case "Elevated":
-        return "border-l-4 border-l-amber-500";
-      case "Slowing":
-        return "border-l-4 border-l-gray-500";
-      case "Cautious":
-        return "border-l-4 border-l-amber-500";
-      default:
-        return "border-l-4 border-l-gray-400";
-    }
-  };
-
-  const normalizedPosition = ((riskScore + 4) / 8) * 100;
+  function getMacroBg(score: number) {
+    if (score >= 1) return "bg-red-50";
+    if (score <= -1) return "bg-blue-50";
+    return "bg-gray-50";
+  }
 
   return (
     <main className="bg-white text-black">
@@ -129,7 +67,7 @@ export default function Home() {
       <section id="risk" className="py-24 bg-gray-50 px-6">
         <div className="max-w-6xl mx-auto space-y-12">
 
-          {/* Regime Summary */}
+          {/* Composite Regime Summary */}
           <div className="bg-white border rounded-lg p-6 shadow-sm">
             <div className="flex justify-between items-center">
               <div>
@@ -168,34 +106,100 @@ export default function Home() {
               <Link
                 key={item.slug}
                 href={`/dashboard/${item.slug}`}
-                className={`group bg-white border rounded-lg p-7 shadow-sm hover:shadow-md transition-all duration-200 ${getBorderStyle(item.status)}`}
+                className="group bg-white border rounded-lg p-7 shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-semibold tracking-tight">
-                    {item.label}
-                  </h3>
-                  <span className="text-xs text-gray-500">
-                    Updated
-                  </span>
-                </div>
+                <div className="space-y-5">
 
-                <p className="text-sm text-gray-600 mb-4">
-                  {item.summary}
-                </p>
+                  {/* Header + Regime Badge */}
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold tracking-tight">
+                      {item.label}
+                    </h3>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">
-                    {item.status}
-                  </span>
-                  <Sparkline data={item.trend} />
-                </div>
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full ${getMacroBg(item.score)} ${getMacroTextColor(item.score)}`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
 
-                <div className="mt-5 text-sm text-gray-500 group-hover:text-black transition">
-                  View Detailed Analysis →
+                  {/* Inflation Structured Metrics */}
+                  {item.slug === "inflation" && item.meta && (
+                    <>
+                      <div className={`rounded-lg p-5 ${getMacroBg(item.score)}`}>
+                        <div className="grid grid-cols-3 gap-6 text-center">
+
+                          <div>
+                            <p className={`text-xl font-semibold ${getMacroTextColor(item.score)}`}>
+                              {typeof item.meta.headline === "number"
+                                ? item.meta.headline.toFixed(1)
+                                : "N/A"}%
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Headline
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className={`text-xl font-semibold ${getMacroTextColor(item.score)}`}>
+                              {typeof item.meta.core === "number"
+                                ? item.meta.core.toFixed(1)
+                                : "N/A"}%
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Core
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className={`text-xl font-semibold ${getMacroTextColor(item.score)}`}>
+                              {typeof item.meta.breakeven === "number"
+                                ? item.meta.breakeven.toFixed(2)
+                                : "N/A"}%
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              5Y BE
+                            </p>
+                          </div>
+
+                        </div>
+
+                        <div className="mt-4 text-center text-xs text-gray-600">
+                          3M Momentum:{" "}
+                          {typeof item.meta.momentum === "number"
+                            ? item.meta.momentum.toFixed(2)
+                            : "N/A"}%
+                        </div>
+                      </div>
+
+                      {/* Dynamic Interpretation */}
+                      {item.summary && (
+                        <div className="text-sm text-gray-600 leading-relaxed mt-4">
+                          {item.summary}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* Other Categories */}
+                  {item.slug !== "inflation" && (
+                    <p className="text-sm text-gray-600">
+                      {item.summary}
+                    </p>
+                  )}
+
+                  <div className="text-sm text-gray-500 group-hover:text-black transition">
+                    View Detailed Analysis →
+                  </div>
+
                 </div>
               </Link>
             ))}
           </div>
+
+          <p className="text-xs text-gray-500 text-center">
+            Last updated: {new Date(risk.lastUpdated).toLocaleDateString()}
+          </p>
 
         </div>
       </section>
@@ -256,36 +260,7 @@ export default function Home() {
       </section>
 
       {/* Email Capture */}
-      <section
-        id="early"
-        className="py-24 bg-black text-white px-6 text-center"
-      >
-        <div className="max-w-xl mx-auto space-y-8">
-          <h2 className="text-3xl font-semibold">
-            Join Early Access
-          </h2>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="px-4 py-3 rounded-md bg-white text-black placeholder-gray-500 w-72"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button
-              onClick={handleSubmit}
-              className="px-6 py-3 bg-white text-black rounded-md font-medium"
-            >
-              Join
-            </button>
-          </div>
-
-          {status && (
-            <p className="text-sm text-gray-300">{status}</p>
-          )}
-        </div>
-      </section>
+      <EmailSignup />
 
       {/* Footer */}
       <footer className="py-8 text-center text-sm text-gray-500 border-t">
