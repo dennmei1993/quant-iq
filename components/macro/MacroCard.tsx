@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { RiskCategory, NullableNumber } from "@/lib/types";
 import { getMacroBg, getMacroTextColor } from "@/lib/ui";
 
-export default function MacroCard({ item }: { item: RiskCategory  }) {
+export default function MacroCard({ item }: { item: RiskCategory }) {
   return (
     <Link
       href={`/dashboard/${item.slug}`}
@@ -10,27 +10,64 @@ export default function MacroCard({ item }: { item: RiskCategory  }) {
     >
       <div className="space-y-5">
 
+        {/* Header */}
         <div className="flex justify-between">
-          <h3 className="font-semibold tracking-tight">{item.label}</h3>
+          <h3 className="font-semibold tracking-tight">
+            {item.label}
+          </h3>
 
           <span
             className={`text-xs px-3 py-1 rounded-full ${getMacroBg(
-              item.score
-            )} ${getMacroTextColor(item.score)}`}
+              item.state
+            )} ${getMacroTextColor(item.state)}`}
           >
             {item.state}
           </span>
         </div>
 
-        {item.summary && (
-          <p className="text-sm text-gray-600">{item.summary}</p>
+        {/* 🔹 CPI Metrics (Inflation Only) */}
+        {item.slug === "inflation" && item.meta && (
+          <div className="grid grid-cols-3 gap-4 text-sm text-center">
+            <Metric label="Headline" value={item.meta.headline} />
+            <Metric label="Core" value={item.meta.core} />
+            <Metric label="5Y BE" value={item.meta.breakeven} />
+          </div>
         )}
 
+        {/* Summary */}
+        {item.summary && (
+          <p className="text-sm text-gray-600">
+            {item.summary}
+          </p>
+        )}
+
+        {/* Footer */}
         <div className="text-sm text-gray-500 group-hover:text-black">
           View Detailed Analysis →
         </div>
 
       </div>
     </Link>
+  );
+}
+
+/* ============================= */
+/* Metric Component              */
+/* ============================= */
+
+function Metric({
+  label,
+  value,
+}: {
+  label: string;
+  value: NullableNumber | undefined;
+}) {
+  return (
+    <div>
+      <div className="text-gray-500">{label}</div>
+      <div className="font-semibold">
+        {value != null ? value.toFixed(1) + "%" : "—"}
+      </div>
+    </div>
   );
 }

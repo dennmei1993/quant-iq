@@ -2,6 +2,9 @@ import { getRiskState } from "@/lib/riskEngine";
 import { mapRiskToMacro } from "@/lib/mappers";
 import MacroCard from "@/components/macro/MacroCard";
 import ScoreBar from "@/components/macro/ScoreBar";
+import type { RiskLevel } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const risk = await getRiskState();
@@ -13,10 +16,15 @@ export default async function Home() {
     lastUpdated,
   } = risk;
 
-  // Map engine types → strict UI types
+  // Normalize engine → UI layer
   const macroCategories = categories.map(mapRiskToMacro);
 
-  return (
+  // Extract inflation category (engine layer)
+  const inflationCategory = categories.find(
+    (c) => c.slug === "inflation"
+  );
+
+    return (
     <>
       <HeroSection />
 
@@ -31,7 +39,7 @@ export default async function Home() {
 }
 
 /* ============================= */
-/* Sections                      */
+/* Hero Section                  */
 /* ============================= */
 
 function HeroSection() {
@@ -41,6 +49,7 @@ function HeroSection() {
         <h1 className="text-5xl font-bold tracking-tight">
           Systematic Portfolio Intelligence
         </h1>
+
         <p className="text-lg text-gray-600 leading-relaxed">
           A disciplined macro framework for asset allocation,
           structural awareness, and long-term capital preservation.
@@ -50,15 +59,21 @@ function HeroSection() {
   );
 }
 
+/* ============================= */
+/* Risk Section                  */
+/* ============================= */
+
+type MacroItem = ReturnType<typeof mapRiskToMacro>;
+
 function RiskSection({
   regime,
   score,
   categories,
   lastUpdated,
 }: {
-  regime: string;
+  regime: RiskLevel;
   score: number;
-  categories: ReturnType<typeof mapRiskToMacro>[];
+  categories: MacroItem[];
   lastUpdated: string;
 }) {
   return (
@@ -74,7 +89,7 @@ function RiskSection({
         </div>
 
         <p className="text-xs text-gray-500 text-center">
-          Last updated: {new Date(lastUpdated).toLocaleDateString()}
+          Last updated: {formatDate(lastUpdated)}
         </p>
 
       </div>
@@ -82,21 +97,26 @@ function RiskSection({
   );
 }
 
+/* ============================= */
+/* Composite Summary             */
+/* ============================= */
+
 function CompositeSummary({
   regime,
   score,
 }: {
-  regime: string;
+  regime: RiskLevel;
   score: number;
 }) {
   return (
     <div className="bg-white border rounded-lg p-6 shadow-sm">
       <div className="flex justify-between items-center">
+
         <div>
           <p className="text-sm text-gray-500">
             Current Global Environment
           </p>
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-xl font-semibold capitalize">
             {regime}
           </h3>
         </div>
@@ -106,12 +126,23 @@ function CompositeSummary({
             Composite Risk Score
           </p>
           <p className="text-lg font-semibold">
-            {score}
+            {score.toFixed(1)}
           </p>
         </div>
+
       </div>
 
       <ScoreBar score={score} />
     </div>
   );
+}
+
+/* ============================= */
+/* Utilities                     */
+/* ============================= */
+
+function formatDate(input: string): string {
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString();
 }

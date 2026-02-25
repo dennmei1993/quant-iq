@@ -1,6 +1,6 @@
 import { getRiskState } from "@/lib/riskEngine";
 import { notFound } from "next/navigation";
-import Metric from "@/components/macro/Metric";
+import { Metric }  from "@/components/macro/Metric";
 import { getMacroBg } from "@/lib/ui";
 
 export default async function DetailPage({
@@ -27,12 +27,12 @@ export default async function DetailPage({
 
       {category.meta && (
         <section className="py-16 px-6 bg-gray-50">
-          <div className={`max-w-4xl mx-auto p-8 rounded-lg ${getMacroBg(category.score)}`}>
+          <div className={`max-w-4xl mx-auto p-8 rounded-lg ${getMacroBg(category.state)}`}>
             <div className="grid md:grid-cols-3 gap-8 text-center">
 
-              <Metric value={category.meta.headline} decimals={1} label="Headline CPI" score={category.score} />
-              <Metric value={category.meta.core} decimals={1} label="Core CPI" score={category.score} />
-              <Metric value={category.meta.breakeven} decimals={2} label="5Y Breakeven" score={category.score} />
+              <Metric value={category.meta.headline} decimals={1} label="Headline CPI" level={category.state} />
+              <Metric value={category.meta.core} decimals={1} label="Core CPI" level={category.state} />
+              <Metric value={category.meta.breakeven} decimals={2} label="5Y Breakeven" level={category.state} />
 
             </div>
           </div>
