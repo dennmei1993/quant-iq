@@ -1,10 +1,11 @@
 import { computeInflation } from "./modules/inflation";
+import { RiskState } from "./types";
 
 export type RiskCategory = {
   slug: string;
   label: string;
   status: string;
-  summary: string;
+  summary: string; // ✅ now string only
   trend: number[];
   score: number;
   meta?: Record<string, number | null>;
@@ -12,7 +13,7 @@ export type RiskCategory = {
 
 export type RiskState = {
   regime: string;
-  score: number; // -4 to +4 composite
+  score: number;
   categories: RiskCategory[];
   lastUpdated: string;
 };
@@ -24,16 +25,15 @@ function deriveRegime(score: number): string {
 }
 
 export async function getRiskState(): Promise<RiskState> {
-  // ---- Module Computations ----
+
   const inflation = await computeInflation();
 
-  // ---- Category Mapping ----
   const categories: RiskCategory[] = [
     {
       slug: "inflation",
       label: "Inflation",
       status: inflation.regime,
-      summary: inflation.summary,
+      summary: inflation.summary,   // ← must be string
       trend: inflation.series,
       score: inflation.score,
       meta: {
@@ -43,7 +43,6 @@ export async function getRiskState(): Promise<RiskState> {
         breakeven: inflation.breakeven5y,
       }
     },
-    // Placeholder modules (replace next)
     {
       slug: "rates",
       label: "Interest Rates",
@@ -78,15 +77,8 @@ export async function getRiskState(): Promise<RiskState> {
     },
   ];
 
-  // ---- Composite Score ----
-  const compositeScore = categories.reduce(
-    (sum, c) => sum + c.score,
-    0
-  );
-
-  // Clamp composite to [-4, +4]
+  const compositeScore = categories.reduce((sum, c) => sum + c.score, 0);
   const clampedScore = Math.max(-4, Math.min(4, compositeScore));
-
   const regime = deriveRegime(clampedScore);
 
   return {

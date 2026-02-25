@@ -12,6 +12,7 @@ export default async function InflationPage() {
     regime,
     score,
     series,
+    summary,
     deepAnalysis,
   } = data;
 
@@ -31,10 +32,16 @@ export default async function InflationPage() {
             Inflation Analysis
           </h1>
           <p className="text-gray-500 text-sm">
-            Live CPI data sourced from FRED.  
             Educational insight only. Not investment advice.
           </p>
         </div>
+
+        {/* Public Headline */}
+        {summary && (
+          <div className="bg-gray-50 border rounded-lg p-6 text-gray-700">
+            {summary}
+          </div>
+        )}
 
         {/* Regime Card */}
         <div className={`rounded-lg border p-6 ${getRegimeColor(score)}`}>
@@ -66,23 +73,9 @@ export default async function InflationPage() {
               Current Levels
             </h2>
 
-            <Metric
-              label="Headline CPI (YoY)"
-              value={headlineYoY}
-              decimals={1}
-            />
-
-            <Metric
-              label="Core CPI (YoY)"
-              value={coreYoY}
-              decimals={1}
-            />
-
-            <Metric
-              label="5Y Breakeven Inflation"
-              value={breakeven5y}
-              decimals={2}
-            />
+            <Metric label="Headline CPI (YoY)" value={headlineYoY} decimals={1} />
+            <Metric label="Core CPI (YoY)" value={coreYoY} decimals={1} />
+            <Metric label="5Y Breakeven Inflation" value={breakeven5y} decimals={2} />
           </div>
 
           <div className="bg-gray-50 border rounded-lg p-6 space-y-4">
@@ -90,21 +83,16 @@ export default async function InflationPage() {
               Short-Term Dynamics
             </h2>
 
-            <Metric
-              label="Core 3M Momentum"
-              value={coreMomentum}
-              decimals={2}
-            />
+            <Metric label="Core 3M Momentum" value={coreMomentum} decimals={2} />
 
             <p className="text-xs text-gray-500">
               Momentum reflects 3-month directional pressure in core prices.
             </p>
           </div>
-
         </div>
 
         {/* Chart */}
-        {series.length > 0 && (
+        {series && series.length > 0 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">
               24-Month Trend
@@ -115,25 +103,33 @@ export default async function InflationPage() {
           </div>
         )}
 
-        {/* Interpretation */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">
-            Interpretation
-          </h2>
-          <div className="bg-gray-50 border rounded-lg p-6 text-gray-700 leading-relaxed">
-            {deepAnalysis}
+        {/* Deep Analysis (Structured JSON Render) */}
+        {deepAnalysis && (
+          <div className="space-y-6">
+
+            <h2 className="text-lg font-semibold">
+              Detailed Analysis
+            </h2>
+
+            <Section title="Drivers" text={deepAnalysis.drivers} />
+            <Section title="Stocks" text={deepAnalysis.stocks} />
+            <Section title="Bonds" text={deepAnalysis.bonds} />
+            <Section title="Gold" text={deepAnalysis.gold} />
+            <Section title="Silver" text={deepAnalysis.silver} />
+            <Section title="Oil" text={deepAnalysis.oil} />
+            <Section title="Regime Shift Risk" text={deepAnalysis.regimeShiftRisk} />
+
           </div>
-        </div>
+        )}
 
       </div>
     </main>
   );
 }
 
-//
-// ------------------------------
-// Reusable Metric Component
-// ------------------------------
+/* ------------------------------ */
+/* Reusable Components */
+/* ------------------------------ */
 
 function Metric({
   label,
@@ -154,6 +150,23 @@ function Metric({
           ? `${value.toFixed(decimals)}%`
           : "N/A"}
       </span>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  text,
+}: {
+  title: string;
+  text?: string;
+}) {
+  if (!text) return null;
+
+  return (
+    <div className="bg-gray-50 border rounded-lg p-6">
+      <h3 className="font-semibold mb-3">{title}</h3>
+      <p className="text-gray-700 leading-relaxed">{text}</p>
     </div>
   );
 }
