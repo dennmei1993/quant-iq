@@ -1,12 +1,11 @@
-import {
+import type {
   RiskCategory,
-  MacroCategory,
   InflationMeta,
 } from "./types";
 
 export function mapRiskToMacro(
   category: RiskCategory
-): MacroCategory {
+): RiskCategory {
   if (category.slug === "inflation" && category.meta) {
     const meta = category.meta;
 

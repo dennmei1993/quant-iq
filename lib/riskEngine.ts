@@ -1,52 +1,45 @@
 import { computeInflation } from "./modules/inflation";
-import { RiskState } from "./types";
+import { RiskLevel } from "./types";
+import type { RiskCategory, RiskState } from "./types";
 
-export type RiskCategory = {
-  slug: string;
-  label: string;
-  status: string;
-  summary: string; // ✅ now string only
-  trend: number[];
-  score: number;
-  meta?: Record<string, number | null>;
-};
-
-export type RiskState = {
-  regime: string;
-  score: number;
-  categories: RiskCategory[];
-  lastUpdated: string;
-};
-
-function deriveRegime(score: number): string {
-  if (score <= -2) return "Defensive Bias";
-  if (score >= 2) return "Expansionary Bias";
-  return "Neutral";
+/**
+ * Converts composite score into macro regime
+ */
+function deriveRegime(score: number): RiskLevel {
+  if (score <= -2) return RiskLevel.Low;
+  if (score >= 2) return RiskLevel.High;
+  return RiskLevel.Neutral;
 }
 
+/**
+ * Computes full macro risk state snapshot
+ */
 export async function getRiskState(): Promise<RiskState> {
-
   const inflation = await computeInflation();
 
   const categories: RiskCategory[] = [
     {
       slug: "inflation",
       label: "Inflation",
-      status: inflation.regime,
-      summary: inflation.summary,   // ← must be string
+      state: inflation.score >= 2
+        ? RiskLevel.High
+        : inflation.score <= -2
+        ? RiskLevel.Low
+        : RiskLevel.Neutral,
+      summary: inflation.summary,
       trend: inflation.series,
       score: inflation.score,
       meta: {
-        headline: inflation.headlineYoY,
-        core: inflation.coreYoY,
-        momentum: inflation.coreMomentum,
-        breakeven: inflation.breakeven5y,
-      }
+        headline: inflation.headlineYoY ?? 0,
+        core: inflation.coreYoY ?? 0,
+        momentum: inflation.coreMomentum ?? 0,
+        breakeven: inflation.breakeven5y ?? 0,
+      },
     },
     {
       slug: "rates",
       label: "Interest Rates",
-      status: "Elevated",
+      state: RiskLevel.High,
       summary: "Policy rates remain above neutral levels.",
       trend: [0.5, 0.75, 1.5, 2.5, 3.5, 4.25, 4.5, 4.5],
       score: 1,
@@ -54,7 +47,7 @@ export async function getRiskState(): Promise<RiskState> {
     {
       slug: "growth",
       label: "Growth",
-      status: "Slowing",
+      state: RiskLevel.Neutral,
       summary: "Leading indicators moderating.",
       trend: [55, 54, 53, 52, 50, 49, 48, 47],
       score: -1,
@@ -62,7 +55,7 @@ export async function getRiskState(): Promise<RiskState> {
     {
       slug: "market",
       label: "Market Conditions",
-      status: "Cautious",
+      state: RiskLevel.Neutral,
       summary: "Volatility above median levels.",
       trend: [15, 16, 18, 22, 28, 24, 21, 19],
       score: -1,
@@ -70,14 +63,18 @@ export async function getRiskState(): Promise<RiskState> {
     {
       slug: "geopolitics",
       label: "Key Events",
-      status: "Moderate",
+      state: RiskLevel.Neutral,
       summary: "Structural geopolitical developments.",
       trend: [1, 1, 2, 2, 3, 3, 2, 2],
       score: 0,
     },
   ];
 
-  const compositeScore = categories.reduce((sum, c) => sum + c.score, 0);
+  const compositeScore = categories.reduce(
+    (sum, category) => sum + category.score,
+    0
+  );
+
   const clampedScore = Math.max(-4, Math.min(4, compositeScore));
   const regime = deriveRegime(clampedScore);
 

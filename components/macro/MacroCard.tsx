@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { MacroCategory } from "@/lib/types";
+import type { RiskCategory, NullableNumber } from "@/lib/types";
 import { getMacroBg, getMacroTextColor } from "@/lib/ui";
 
-export default function MacroCard({ item }: { item: MacroCategory }) {
+export default function MacroCard({ item }: { item: RiskCategory  }) {
   return (
     <Link
       href={`/dashboard/${item.slug}`}
@@ -18,7 +18,7 @@ export default function MacroCard({ item }: { item: MacroCategory }) {
               item.score
             )} ${getMacroTextColor(item.score)}`}
           >
-            {item.status}
+            {item.state}
           </span>
         </div>
 
