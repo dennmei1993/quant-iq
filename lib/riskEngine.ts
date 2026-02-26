@@ -1,31 +1,57 @@
 import { computeInflation } from "./modules/inflation";
 import { RiskLevel } from "./types";
 import type { RiskCategory, RiskState } from "./types";
+import { getSupabaseServer } from "@/lib/supabaseServer";
 
-/**
- * Converts composite score into macro regime
- */
+/* ============================= */
+/* Helpers                       */
+/* ============================= */
+
 function deriveRegime(score: number): RiskLevel {
   if (score <= -2) return RiskLevel.Low;
   if (score >= 2) return RiskLevel.High;
   return RiskLevel.Neutral;
 }
 
-/**
- * Computes full macro risk state snapshot
- */
+function mapToneToRiskLevel(tone?: string): RiskLevel {
+  if (!tone) return RiskLevel.Neutral;
+
+  if (tone.includes("risk-off")) return RiskLevel.High;
+  if (tone.includes("risk-on")) return RiskLevel.Low;
+
+  return RiskLevel.Neutral;
+}
+
+/* ============================= */
+/* Engine                        */
+/* ============================= */
+
 export async function getRiskState(): Promise<RiskState> {
+  const supabase = getSupabaseServer();
+  const today = new Date().toISOString().slice(0, 10);
+
+  /* ---------- Inflation ---------- */
   const inflation = await computeInflation();
 
+  /* ---------- Key Event Signal ---------- */
+  const { data: keyEventSignal } = await supabase
+    .from("macro_signals")
+    .select("*")
+    .eq("signal_type", "key_event")
+    .eq("period", today)
+    .maybeSingle();
+
+  /* ---------- Categories ---------- */
   const categories: RiskCategory[] = [
     {
       slug: "inflation",
       label: "Inflation",
-      state: inflation.score >= 2
-        ? RiskLevel.High
-        : inflation.score <= -2
-        ? RiskLevel.Low
-        : RiskLevel.Neutral,
+      state:
+        inflation.score >= 2
+          ? RiskLevel.High
+          : inflation.score <= -2
+          ? RiskLevel.Low
+          : RiskLevel.Neutral,
       summary: inflation.summary,
       trend: inflation.series,
       score: inflation.score,
@@ -36,6 +62,7 @@ export async function getRiskState(): Promise<RiskState> {
         breakeven: inflation.breakeven5y ?? 0,
       },
     },
+
     {
       slug: "rates",
       label: "Interest Rates",
@@ -44,6 +71,7 @@ export async function getRiskState(): Promise<RiskState> {
       trend: [0.5, 0.75, 1.5, 2.5, 3.5, 4.25, 4.5, 4.5],
       score: 1,
     },
+
     {
       slug: "growth",
       label: "Growth",
@@ -52,6 +80,7 @@ export async function getRiskState(): Promise<RiskState> {
       trend: [55, 54, 53, 52, 50, 49, 48, 47],
       score: -1,
     },
+
     {
       slug: "market",
       label: "Market Conditions",
@@ -60,16 +89,25 @@ export async function getRiskState(): Promise<RiskState> {
       trend: [15, 16, 18, 22, 28, 24, 21, 19],
       score: -1,
     },
+
     {
-      slug: "geopolitics",
+      slug: "key_event",
       label: "Key Events",
-      state: RiskLevel.Neutral,
-      summary: "Structural geopolitical developments.",
-      trend: [1, 1, 2, 2, 3, 3, 2, 2],
-      score: 0,
-    },
+      state: mapToneToRiskLevel(
+        keyEventSignal?.structured?.tone
+      ),
+      summary:
+        keyEventSignal?.narrative_headline ??
+        "No major developments.",
+      trend: [],
+      score:
+        keyEventSignal?.structured?.avg_impact_score ?? 0,
+        meta: {
+          deep: keyEventSignal?.narrative_deep ?? null,}
+    }
   ];
 
+  /* ---------- Composite ---------- */
   const compositeScore = categories.reduce(
     (sum, category) => sum + category.score,
     0

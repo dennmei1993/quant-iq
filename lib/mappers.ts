@@ -7,7 +7,7 @@ export function mapRiskToMacro(
   category: RiskCategory
 ): RiskCategory {
   if (category.slug === "inflation" && category.meta) {
-    const meta = category.meta;
+    const meta = category.meta as InflationMeta;
 
     const inflationMeta: InflationMeta = {
       headline: meta.headline ?? null,

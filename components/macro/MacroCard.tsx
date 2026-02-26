@@ -1,8 +1,30 @@
 import Link from "next/link";
-import type { RiskCategory, NullableNumber } from "@/lib/types";
+import type {
+  RiskCategory,
+  InflationMeta,
+  NullableNumber,
+} from "@/lib/types";
 import { getMacroBg, getMacroTextColor } from "@/lib/ui";
 
-export default function MacroCard({ item }: { item: RiskCategory }) {
+/* ============================= */
+/* Type Guard                    */
+/* ============================= */
+
+function isInflationCategory(
+  item: RiskCategory
+): item is RiskCategory & { meta?: InflationMeta } {
+  return item.slug === "inflation";
+}
+
+/* ============================= */
+/* Component                     */
+/* ============================= */
+
+export default function MacroCard({
+  item,
+}: {
+  item: RiskCategory;
+}) {
   return (
     <Link
       href={`/dashboard/${item.slug}`}
@@ -26,7 +48,7 @@ export default function MacroCard({ item }: { item: RiskCategory }) {
         </div>
 
         {/* 🔹 CPI Metrics (Inflation Only) */}
-        {item.slug === "inflation" && item.meta && (
+        {isInflationCategory(item) && item.meta && (
           <div className="grid grid-cols-3 gap-4 text-sm text-center">
             <Metric label="Headline" value={item.meta.headline} />
             <Metric label="Core" value={item.meta.core} />
@@ -34,9 +56,9 @@ export default function MacroCard({ item }: { item: RiskCategory }) {
           </div>
         )}
 
-        {/* Summary */}
+        {/* Summary (supports multi-line headlines) */}
         {item.summary && (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 whitespace-pre-line">
             {item.summary}
           </p>
         )}
@@ -66,7 +88,7 @@ function Metric({
     <div>
       <div className="text-gray-500">{label}</div>
       <div className="font-semibold">
-        {value != null ? value.toFixed(1) + "%" : "—"}
+        {value != null ? `${value.toFixed(1)}%` : "—"}
       </div>
     </div>
   );

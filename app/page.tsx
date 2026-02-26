@@ -19,12 +19,7 @@ export default async function Home() {
   // Normalize engine → UI layer
   const macroCategories = categories.map(mapRiskToMacro);
 
-  // Extract inflation category (engine layer)
-  const inflationCategory = categories.find(
-    (c) => c.slug === "inflation"
-  );
-
-    return (
+  return (
     <>
       <HeroSection />
 

@@ -7,27 +7,47 @@ export const RiskLevel = {
 export type RiskLevel = typeof RiskLevel[keyof typeof RiskLevel];
 export type NullableNumber = number | null;
 
-export type RiskCategory = {
-  slug: string;
-  label: string;
-  state: RiskLevel;
-  score: number;
-  summary: string;
-  deepAnalysis?: string;
-  trend: number[];
-  meta?: InflationMeta;
-};
-
 export interface RiskState {
   regime: RiskLevel;
   score: number;
-  lastUpdated: string;
   categories: RiskCategory[];
+  lastUpdated: string;
 }
 
-export type InflationMeta = {
+export interface InflationMeta {
   headline: number | null;
   core: number | null;
-  momentum: number | null;
   breakeven: number | null;
-};
+  momentum: number | null;
+}
+
+export interface KeyEventMeta {
+  deep?: {
+    events: {
+      headline: string;
+      analysis: string;
+      impact_tone: string;
+      impact_score: number;
+      importance: number;
+    }[];
+    aggregate?: {
+      avg_score: number;
+      tone: string;
+    };
+  };
+}
+
+export type MacroMeta =
+  | InflationMeta
+  | KeyEventMeta
+  | undefined;
+
+export interface RiskCategory {
+  slug: string;
+  label: string;
+  state: RiskLevel;
+  summary?: string;
+  trend?: number[];
+  score: number;
+  meta?: MacroMeta;
+}

@@ -1,0 +1,96 @@
+================================ 
+Run started at Thu 26/02/2026 10:33:35.36 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+Running key event generation: 2026-02-25T23:33:36.887Z
+^C^C================================ 
+Run started at Thu 26/02/2026 10:34:27.52 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+Running key event generation: 2026-02-25T23:34:28.890Z
+Inserted key events successfully.
+Run finished at Thu 26/02/2026 10:34:43.55 
+================================ 
+Run started at Thu 26/02/2026 14:18:58.21 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Running key event generation: 2026-02-26T03:18:59.798Z
+Inserted key events successfully.
+Run finished at Thu 26/02/2026 14:19:13.79 
+================================ 
+Run started at Thu 26/02/2026 14:25:59.69 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+Running key event generation: 2026-02-26T03:26:01.239Z
+Insert into macro_signals failed: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'narrative_summary' column of 'macro_signals' in the schema cache"
+}
+ERROR detected at Thu 26/02/2026 14:26:18.85 
+================================ 
+Run started at Thu 26/02/2026 14:29:27.32 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: ⚙️  enable debug logging with { debug: true }
+Running key event generation: 2026-02-26T03:29:28.820Z
+Insert into macro_signals failed: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'narrative_summary' column of 'macro_signals' in the schema cache"
+}
+ERROR detected at Thu 26/02/2026 14:29:46.42 
+================================ 
+Run started at Thu 26/02/2026 14:35:18.86 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+Running key event generation: 2026-02-26T03:35:20.454Z
+macro_signals inserted successfully.
+Run finished at Thu 26/02/2026 14:35:37.80 
+================================ 
+Run started at Thu 26/02/2026 14:51:58.97 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+Running key event generation: 2026-02-26T03:52:00.515Z
+macro_signals upserted successfully.
+Run finished at Thu 26/02/2026 14:52:12.52 
+================================ 
+Run started at Thu 26/02/2026 14:59:37.55 
+
+> quant-iq@0.1.0 keyevents
+> tsx scripts/generateKeyEvents.ts
+
+[dotenv@17.3.1] injecting env (8) from .env.local -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.3.1] injecting env (0) from .env.local -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Running key event generation: 2026-02-26T03:59:39.090Z
+macro_signals upserted successfully.
+Run finished at Thu 26/02/2026 14:59:57.19 
