@@ -8,19 +8,22 @@ export default function Home() {
 
   return (
 
-    <main>
-
-      <Navbar />
-
+    <>
       <Hero />
 
-      <Features />
+      <section className="py-12 text-center">
 
-      <DashboardPreview />
+        <h2 className="text-2xl font-semibold mb-4">
+          Market Themes
+        </h2>
 
-      <Footer />
+        <p className="text-gray-600">
+          Track the forces shaping global markets.
+        </p>
 
-    </main>
+      </section>
+
+    </>
 
   )
 
