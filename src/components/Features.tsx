@@ -3,40 +3,44 @@ export default function Features() {
   const features = [
     {
       title: "Theme Intelligence",
-      description: "Identify the themes driving markets."
+      desc: "Identify emerging investment themes across global markets."
     },
     {
       title: "Macro Signals",
-      description: "Track global events impacting assets."
+      desc: "Structured macro events and signals impacting markets."
     },
     {
-      title: "Asset Insights",
-      description: "Understand which companies benefit."
+      title: "Asset Discovery",
+      desc: "Explore equities, ETFs, and sectors linked to themes."
     }
   ]
 
   return (
+    <section style={{
+      padding:"80px 40px",
+      maxWidth:1100,
+      margin:"auto"
+    }}>
+      
+      <div style={{
+        display:"grid",
+        gridTemplateColumns:"repeat(3,1fr)",
+        gap:30
+      }}>
 
-    <section className="grid grid-cols-3 gap-8 py-16">
+        {features.map((f,i)=>(
+          <div key={i} style={{
+            padding:30,
+            border:"1px solid #eee",
+            borderRadius:10
+          }}>
+            <h3>{f.title}</h3>
+            <p style={{color:"#555"}}>{f.desc}</p>
+          </div>
+        ))}
 
-      {features.map((f) => (
-
-        <div key={f.title} className="p-6 border rounded">
-
-          <h3 className="font-semibold text-lg mb-2">
-            {f.title}
-          </h3>
-
-          <p className="text-gray-600">
-            {f.description}
-          </p>
-
-        </div>
-
-      ))}
+      </div>
 
     </section>
-
   )
-
 }

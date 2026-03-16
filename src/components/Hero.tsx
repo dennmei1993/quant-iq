@@ -1,24 +1,37 @@
 export default function Hero() {
-
   return (
-
-    <section className="text-center py-20">
-
-      <h1 className="text-4xl font-bold mb-6">
-        Discover Market Themes Driving Global Assets
+    <section style={{
+      padding:"120px 40px",
+      textAlign:"center",
+      background:"#f8fafc"
+    }}>
+      
+      <h1 style={{
+        fontSize:48,
+        fontWeight:700
+      }}>
+        AI-Powered Market Intelligence
       </h1>
 
-      <p className="text-gray-600 max-w-xl mx-auto mb-8">
-        Quant IQ analyzes macro signals, market themes, and company exposure
-        to reveal the forces shaping global markets.
+      <p style={{
+        marginTop:20,
+        fontSize:18,
+        color:"#555"
+      }}>
+        Discover market themes, macro signals, and asset intelligence.
       </p>
 
-      <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
-        Explore Themes
+      <button style={{
+        marginTop:30,
+        padding:"12px 24px",
+        fontSize:16,
+        background:"black",
+        color:"white",
+        borderRadius:6
+      }}>
+        Explore Platform
       </button>
 
     </section>
-
   )
-
 }

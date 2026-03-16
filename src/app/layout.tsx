@@ -1,27 +1,24 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import "./globals.css"
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata = {
+  title: "Quant IQ",
+  description: "AI-powered market intelligence"
+}
 
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="max-w-6xl mx-auto">
+      <body>
 
-        <Navbar />
+        <Navbar/>
 
-        <main className="px-6">
-          {children}
-        </main>
+        {children}
 
-        <Footer />
+        <Footer/>
 
       </body>
     </html>
   )
-
 }
-
-export const metadata = {
-  title: "Quant IQ",
-  description: "AI-powered market intelligence platform"
-};

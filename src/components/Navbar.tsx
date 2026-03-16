@@ -1,22 +1,24 @@
 export default function Navbar() {
-
   return (
-    <nav className="flex justify-between items-center px-8 py-4 border-b">
-
-      <div className="text-xl font-bold">
+    <nav style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "16px 40px",
+      borderBottom: "1px solid #eee"
+    }}>
+      
+      <div style={{fontWeight:700,fontSize:20}}>
         Quant IQ
       </div>
 
-      <div className="flex gap-6 text-sm">
-
-        <a href="/" className="hover:text-blue-600">Home</a>
-        <a href="/themes" className="hover:text-blue-600">Themes</a>
-        <a href="/assets" className="hover:text-blue-600">Assets</a>
-        <a href="/macro" className="hover:text-blue-600">Macro</a>
-
+      <div style={{display:"flex",gap:24}}>
+        <a href="/themes">Themes</a>
+        <a href="/macro">Macro</a>
+        <a href="/assets">Assets</a>
+        <a href="/dashboard">Dashboard</a>
       </div>
 
     </nav>
   )
-
 }
