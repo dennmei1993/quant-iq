@@ -5,26 +5,15 @@ import DashboardPreview from "@/components/DashboardPreview"
 import Footer from "@/components/Footer"
 
 export default function Home() {
-
   return (
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold">
+        Quant IQ
+      </h1>
 
-    <>
-      <Hero />
-
-      <section className="py-12 text-center">
-
-        <h2 className="text-2xl font-semibold mb-4">
-          Market Themes
-        </h2>
-
-        <p className="text-gray-600">
-          Track the forces shaping global markets.
-        </p>
-
-      </section>
-
-    </>
-
-  )
-
+      <p className="mt-4 text-gray-500">
+        AI-powered market intelligence
+      </p>
+    </main>
+  );
 }

@@ -20,3 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   )
 
 }
+
+export const metadata = {
+  title: "Quant IQ",
+  description: "AI-powered market intelligence platform"
+};
