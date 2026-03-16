@@ -7,18 +7,20 @@ export const metadata = {
   description: "AI-powered market intelligence"
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
       <body>
 
-        <Navbar/>
+        <Navbar />
 
-        <main className="container">
-          {children}
-        </main>
+        {children}
 
-        <Footer/>
+        <Footer />
 
       </body>
     </html>
