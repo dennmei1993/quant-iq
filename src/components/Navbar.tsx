@@ -4,10 +4,11 @@ export default function Navbar() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      padding: "16px 40px",
-      borderBottom: "1px solid #eee"
+      padding: "18px 40px",
+      borderBottom: "1px solid #eee",
+      background: "white"
     }}>
-      
+
       <div style={{fontWeight:700,fontSize:20}}>
         Quant IQ
       </div>
@@ -16,6 +17,7 @@ export default function Navbar() {
         <a href="/themes">Themes</a>
         <a href="/macro">Macro</a>
         <a href="/assets">Assets</a>
+        <a href="/signals">Signals</a>
         <a href="/dashboard">Dashboard</a>
       </div>
 
