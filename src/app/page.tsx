@@ -1,20 +1,30 @@
-export default function Home() {
-  return (
-    <main style={{
-      display: "flex",
-      minHeight: "100vh",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "sans-serif"
-    }}>
-      <h1 style={{fontSize: "48px", fontWeight: "700"}}>
-        Quant IQ
-      </h1>
+import Navbar from "@/components/Navbar"
+import Hero from "@/components/Hero"
+import Features from "@/components/Features"
+import DashboardPreview from "@/components/DashboardPreview"
+import Footer from "@/components/Footer"
 
-      <p style={{marginTop: "10px", color: "#666"}}>
-        AI-powered market intelligence
-      </p>
-    </main>
-  );
+export default function Home() {
+
+  return (
+
+    <>
+      <Hero />
+
+      <section className="py-12 text-center">
+
+        <h2 className="text-2xl font-semibold mb-4">
+          Market Themes
+        </h2>
+
+        <p className="text-gray-600">
+          Track the forces shaping global markets.
+        </p>
+
+      </section>
+
+    </>
+
+  )
+
 }
