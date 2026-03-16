@@ -1,11 +1,5 @@
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
 import "./globals.css"
-
-export const metadata = {
-  title: "Quant IQ",
-  description: "AI-powered market intelligence"
-}
+import Sidebar from "@/components/Sidebar"
 
 export default function RootLayout({
   children,
@@ -14,13 +8,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gray-100">
 
-        <Navbar />
+        <div className="flex h-screen">
 
-        {children}
+          <Sidebar />
 
-        <Footer />
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
+
+        </div>
 
       </body>
     </html>
